@@ -106,4 +106,3 @@ venv.bak/
 # others
 *.db
 .idea
-ui_templates/

@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>861</width>
+    <height>417</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>10</y>
+      <width>786</width>
+      <height>210</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="main_layout">
+     <item>
+      <layout class="QVBoxLayout" name="project_layout">
+       <item>
+        <widget class="QTreeWidget" name="dirs_widget">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="columnCount">
+          <number>0</number>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QTreeWidget" name="files_widget">
+         <column>
+          <property name="text">
+           <string notr="true">1</string>
+          </property>
+         </column>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="editor_layout">
+       <item>
+        <layout class="QHBoxLayout" name="db_layout">
+         <item>
+          <widget class="QTreeWidget" name="tables">
+           <column>
+            <property name="text">
+             <string notr="true">1</string>
+            </property>
+           </column>
+          </widget>
+         </item>
+         <item>
+          <widget class="QTableWidget" name="table_columns"/>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTabWidget" name="tabs">
+         <property name="currentIndex">
+          <number>-1</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>861</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="new_file"/>
+    <addaction name="new_db"/>
+    <addaction name="open_file"/>
+    <addaction name="save_file"/>
+    <addaction name="save_as_file"/>
+    <addaction name="separator"/>
+    <addaction name="settings_action"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <widget class="QMenu" name="menuSwitch_language">
+     <property name="title">
+      <string>Switch language</string>
+     </property>
+    </widget>
+    <addaction name="menuSwitch_language"/>
+   </widget>
+   <widget class="QMenu" name="menuProject">
+    <property name="title">
+     <string>Project</string>
+    </property>
+    <addaction name="project_open"/>
+    <addaction name="project_close"/>
+    <addaction name="separator"/>
+    <addaction name="project_hide"/>
+    <addaction name="project_show"/>
+   </widget>
+   <widget class="QMenu" name="menuTables">
+    <property name="title">
+     <string>Tables</string>
+    </property>
+    <addaction name="db_create"/>
+    <addaction name="db_remove"/>
+    <addaction name="db_rename"/>
+   </widget>
+   <widget class="QMenu" name="menuTable">
+    <property name="title">
+     <string>Table</string>
+    </property>
+    <addaction name="db_add_row"/>
+    <addaction name="db_del_row"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuProject"/>
+   <addaction name="menuTables"/>
+   <addaction name="menuTable"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="new_file">
+   <property name="text">
+    <string>New</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="open_file">
+   <property name="text">
+    <string>Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionAs">
+   <property name="text">
+    <string>As...</string>
+   </property>
+  </action>
+  <action name="save_file">
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="save_as_file">
+   <property name="text">
+    <string>Save as</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="langAVS">
+   <property name="text">
+    <string>AVS</string>
+   </property>
+  </action>
+  <action name="actionBatch">
+   <property name="text">
+    <string>Batch</string>
+   </property>
+  </action>
+  <action name="settings_action">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
+  <action name="project_open">
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="project_close">
+   <property name="text">
+    <string>Close</string>
+   </property>
+  </action>
+  <action name="project_hide">
+   <property name="text">
+    <string>Hide</string>
+   </property>
+  </action>
+  <action name="project_show">
+   <property name="text">
+    <string>Show</string>
+   </property>
+  </action>
+  <action name="db_create">
+   <property name="text">
+    <string>Create</string>
+   </property>
+  </action>
+  <action name="db_remove">
+   <property name="text">
+    <string>Remove</string>
+   </property>
+  </action>
+  <action name="db_rename">
+   <property name="text">
+    <string>Rename</string>
+   </property>
+  </action>
+  <action name="new_db">
+   <property name="text">
+    <string>New datebase</string>
+   </property>
+  </action>
+  <action name="db_new_row">
+   <property name="text">
+    <string>New row</string>
+   </property>
+  </action>
+  <action name="actionDrop">
+   <property name="text">
+    <string>Drop</string>
+   </property>
+  </action>
+  <action name="db_remove_row">
+   <property name="text">
+    <string>Remove row</string>
+   </property>
+  </action>
+  <action name="db_add_row">
+   <property name="text">
+    <string>Add row</string>
+   </property>
+  </action>
+  <action name="db_del_row">
+   <property name="text">
+    <string>Remove row</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
