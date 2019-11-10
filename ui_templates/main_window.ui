@@ -61,7 +61,13 @@
           </widget>
          </item>
          <item>
-          <widget class="QTableWidget" name="table_columns"/>
+          <widget class="QTreeWidget" name="table_columns">
+           <column>
+            <property name="text">
+             <string notr="true">1</string>
+            </property>
+           </column>
+          </widget>
          </item>
         </layout>
        </item>
