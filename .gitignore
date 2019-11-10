@@ -106,3 +106,4 @@ venv.bak/
 # others
 *.db
 .idea
+settings.json

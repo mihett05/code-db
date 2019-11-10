@@ -5,9 +5,8 @@ from EditorWidget import EditorWidget
 
 class Editor(Qsci.QsciScintilla):
     def __init__(self, settings, parent=None):
-        self.settings = settings
         super().__init__(parent)
-        self.setLexer(Qsci.QsciLexerPython(self))
+        self.settings = settings.settings
         self.setUtf8(True)
         self.setAcceptDrops(True)
         self.setAutoCompletionThreshold(0)
@@ -17,13 +16,17 @@ class Editor(Qsci.QsciScintilla):
         self.setWrapIndentMode(Qsci.QsciScintilla.WrapIndentIndented)
 
         self.setIndentationGuides(True)
-        self.setAutoIndent(True)
-        self.setTabWidth(4)
-        self.setIndentationsUseTabs(True)
+        self.setAutoIndent(self.settings["auto_indent"])
+        self.setTabWidth(self.settings["tab_width"])
+        self.setIndentationsUseTabs(self.settings["tabs"])
 
         self.setMarginType(1, Qsci.QsciScintilla.NumberMargin)
-        self.setMarginsFont(QFont("Times", 8))
-        self.setFont(QFont("Times", 8))
+
+        font = QFont()
+        font.fromString(self.settings["font"])
+
+        self.setMarginsFont(font)
+        self.setFont(font)
 
         self.textChanged.connect(self.changed)
 
@@ -35,6 +38,7 @@ class TextEditorWidget(EditorWidget):
     def __init__(self, settings, lang=None):
         EditorWidget.__init__(self, Editor(settings))
         self.lang = lang if lang is not None else settings.settings["lang"]
+        self.editor().setLexer(eval(f"Qsci.QsciLexer{self.lang}")(self))
         self.name = None
 
     def change_language(self, name):

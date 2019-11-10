@@ -20,7 +20,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             "JavaScript", "D", "Fortran", "Markdown", "Octave", "Perl", "PostScript", "Ruby", "SQL",
             "TeX", "VHDL"
         ], key=lambda x: x[1] if isinstance(x, tuple) else x)
-        self.settings = Settings()
+        self.settings = Settings(self.languages)
         self.statusbar_lang = QLabel(self.settings.settings["lang"])
         self.project = None
         self.observer = None
@@ -89,6 +89,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.db_rename.triggered.connect(self.rename_table)
         self.db_add_row.triggered.connect(self.add_row)
         self.db_del_row.triggered.connect(self.remove_row)
+
+        self.open_project(self.settings.settings["project_path"])
 
     def generate_lang_action_trigger(self, name):
         """
