@@ -47,6 +47,7 @@ class TableEditorWidget(EditorWidget):
         self._is_reading_db = False
         self._columns = dict()
         self.render_method = render_method
+        self.structure = []
         self.initUI()
 
     def initUI(self):

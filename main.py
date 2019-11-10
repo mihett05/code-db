@@ -15,11 +15,10 @@ def except_hook(ex_type, ex_val, traceback):
 sys.excepthook = except_hook
 app = QApplication(sys.argv)
 main_window = MainWindow()
-main_window.show()
-#while True:
-#    try:
-#
-#        break
-#    except BaseException:
-#        pass
+while True:
+    try:
+        main_window.show()
+        break
+    except BaseException:
+        pass
 sys.exit(app.exec_())

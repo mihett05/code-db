@@ -79,6 +79,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tables.setHeaderLabel("Tables")
         self.tables.currentItemChanged.connect(self.table_changed)
 
+        self.table_columns.setHeaderLabels(["Column", "Parameters"])
+
         self.files_widget.itemClicked.connect(self.open_file_project_trigger)
         self.dirs_widget.doubleClicked.connect(self.change_project_dir)
 
@@ -344,9 +346,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if self.tables.indexFromItem(item).data() is not None:
                     widget._active_table = self.tables.indexFromItem(item).data()
                     widget._columns[widget.active_table()] = list()
+                    if len(widget.structure) == 0:
+                        struct = cur.execute("SELECT sql FROM 'sqlite_master' WHERE type = 'table'").fetchone()
+                        if len(struct) > 0:
+                            struct = list(map(lambda x: [x[0].replace("`", "").replace("'", "").replace("\"", ""),
+                                                         x[1][:-1] if x[1].endswith(",") else x[1]],
+                                              map(lambda x: x.split(maxsplit=1),
+                                                  map(str.strip, struct[0].split("\n")[1:-1]))))
+                            widget.structure = struct.copy()
+                    self.table_columns.clear()
+                    self.table_columns.addTopLevelItems(map(lambda x: QTreeWidgetItem(x), widget.structure))
                     try:
-                        cur.execute(f"SELECT * FROM {widget._active_table}")
-                        res = cur.fetchall()
+                        res = cur.execute(f"SELECT * FROM {widget._active_table}").fetchall()
                         with widget as table:
                             columns = list(map(lambda x: x[0], cur.description))
                             table.setColumnCount(len(columns))
@@ -394,6 +405,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     editor.table_names.remove("sqlite_sequence")
                 self.tables.clear()
                 self.tables.addTopLevelItems(map(lambda x: QTreeWidgetItem([str(x)]), editor.table_names))
+
 
     def create_table(self):
         """
