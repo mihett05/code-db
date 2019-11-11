@@ -27,20 +27,38 @@ class Project:
         self.path = None
 
     def hide(self):
+        """
+        Method hides Project's UI elements
+        :return: None
+        """
         self.dirs.hide()
         self.files.hide()
 
     def show(self):
+        """
+        Method shows Project's UI elements
+        :return: None
+        """
         self.dirs.show()
         self.files.show()
 
     def open(self, path):
+        """
+        Method opens project with path
+        :param path: path to project's directory
+        :return: None
+        """
         if path is not None:
             self.path = path
             self.render(self.path)
             self.show()
 
     def render(self, path):
+        """
+        Method adds files and directories to project trees
+        :param path: project directory
+        :return: None
+        """
         if path is not None:
             tree = os.walk(path)
             try:
@@ -55,5 +73,9 @@ class Project:
                 self.files.addTopLevelItems(map(lambda x: QTreeWidgetItem([x]), top_level_files))
 
     def clear(self):
+        """
+        Method clears project
+        :return: None
+        """
         self.dirs.clear()
         self.files.clear()

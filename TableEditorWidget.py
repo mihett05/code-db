@@ -47,14 +47,23 @@ class TableEditorWidget(EditorWidget):
         self._is_reading_db = False
         self._columns = dict()
         self.render_method = render_method
-        self.structure = []
+        self.structure = dict()
         self.initUI()
 
     def initUI(self):
+        """
+        Method setts UI of QTableWidget (editor)
+        :return: None
+        """
         self._editor: QTableWidget
         self._editor.itemChanged.connect(self.changed)
 
-    def changed(self, item):  # Доделать Update в таблице + структура columns + доделать settings
+    def changed(self, item):
+        """
+        Methods handles itemChanged event
+        :param item: cell in QTableWidget that changed
+        :return: None
+        """
         if not self._is_reading_db:
             row = self._editor.row(item)
             cols = list(range(self.get_columns_len(self._active_table)))
@@ -69,10 +78,18 @@ class TableEditorWidget(EditorWidget):
             """, [item.text(), *cols_values])
 
     def apply_changes(self):
+        """
+        Method applies changes after working with db
+        :return: None
+        """
         if self.con is not None:
             self.con.commit()
 
     def active_table(self):
+        """
+        Getter for TableEditorWidget._active_table
+        :return: str
+        """
         return self._active_table
 
     def __enter__(self):
@@ -85,9 +102,18 @@ class TableEditorWidget(EditorWidget):
         return isinstance(exc_type, TypeError)
 
     def get_columns_len(self, table_name):
+        """
+        Getter for length of TableEditorWidget._columns
+        :param table_name: key in TableEditorWidget._columns
+        :return: int
+        """
         return len(self._columns[table_name])
 
     def add_row(self):
+        """
+        Add row in db
+        :return: None
+        """
         if self._active_table is not None:
             res = []
             InsertDialog(self._columns[self._active_table], lambda x: res.append(x)).exec_()
@@ -111,6 +137,10 @@ class TableEditorWidget(EditorWidget):
                     self.render_method(self)
 
     def remove_row(self):
+        """
+        Remove selected rows
+        :return: None
+        """
         if self._active_table is not None and isinstance(self.con, sqlite3.Connection):
             removed_rows = []
             for index in self._editor.selectedIndexes():
@@ -131,6 +161,10 @@ class TableEditorWidget(EditorWidget):
             self.render_method(self)
 
     def close_con(self):
+        """
+        Method closes connection with db
+        :return: None
+        """
         if self.con is not None:
             self.con.close()
 

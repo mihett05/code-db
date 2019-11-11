@@ -6,6 +6,7 @@ from EditorWidget import EditorWidget
 class Editor(Qsci.QsciScintilla):
     def __init__(self, settings, parent=None):
         super().__init__(parent)
+        # Sets parameters of editor
         self.settings = settings.settings
         self.setUtf8(True)
         self.setAcceptDrops(True)
@@ -42,6 +43,11 @@ class TextEditorWidget(EditorWidget):
         self.name = None
 
     def change_language(self, name):
+        """
+        Method changes lexer in editor
+        :param name: name of language (tuple or str)
+        :return: None
+        """
         if isinstance(name, tuple):
             self.lang = name[1]
             self.editor().setLexer(eval(f"Qsci.QsciLexer{name[0]}")(self))

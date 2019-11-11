@@ -30,7 +30,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def initUI(self):
         """
-        Setting UI
+        Method sets UI
         :return: None
         """
         self.setWindowTitle("CodeDB")
@@ -79,7 +79,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.tables.setHeaderLabel("Tables")
         self.tables.currentItemChanged.connect(self.table_changed)
 
-        self.table_columns.setHeaderLabels(["Column", "Parameters"])
+        self.table_columns.setColumnCount(5)
+        self.table_columns.setHorizontalHeaderLabels(["Column", "Type", "Not Null", "Default Value", "Primary Key"])
 
         self.files_widget.itemClicked.connect(self.open_file_project_trigger)
         self.dirs_widget.doubleClicked.connect(self.change_project_dir)
@@ -121,6 +122,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         widget = self.tabs.widget(index)
         if isinstance(widget, TableEditorWidget):
             widget.close_con()
+            self.table_columns.setRowCount(0)
         if not isinstance(self.tabs.widget(index - 1), TableEditorWidget):
             self.db_layout_hide()
         self.tabs.removeTab(index)
@@ -136,6 +138,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.db_layout_hide()
         elif isinstance(self.tabs.widget(index), TableEditorWidget):
             self.show_db_others()
+            self.render_table_structure(self.tabs.widget(index))
 
     def save_file_trigger(self):
         """
@@ -158,8 +161,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 widget.apply_changes()
             else:
                 name = self.save_as_file_trigger()
-                widget.path = name
-                self.tabs.setTabText(index, os.path.basename(name))
+                if not name == "":
+                    widget.path = name
+                    self.tabs.setTabText(index, os.path.basename(name))
 
     def save_as_file_trigger(self):
         """
@@ -346,16 +350,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if self.tables.indexFromItem(item).data() is not None:
                     widget._active_table = self.tables.indexFromItem(item).data()
                     widget._columns[widget.active_table()] = list()
-                    if len(widget.structure) == 0:
-                        struct = cur.execute("SELECT sql FROM 'sqlite_master' WHERE type = 'table'").fetchone()
-                        if len(struct) > 0:
-                            struct = list(map(lambda x: [x[0].replace("`", "").replace("'", "").replace("\"", ""),
-                                                         x[1][:-1] if x[1].endswith(",") else x[1]],
-                                              map(lambda x: x.split(maxsplit=1),
-                                                  map(str.strip, struct[0].split("\n")[1:-1]))))
-                            widget.structure = struct.copy()
-                    self.table_columns.clear()
-                    self.table_columns.addTopLevelItems(map(lambda x: QTreeWidgetItem(x), widget.structure))
+                    if widget.active_table() not in widget.structure:
+                        widget.structure[widget.active_table()] =\
+                            list(map(lambda x: (x[1], x[2], bool(x[3]), x[4] if x[4] is not None else "NULL",
+                                                bool(x[5])), cur.execute(f"PRAGMA table_info({widget.active_table()})")
+                                     .fetchall()))
+                    self.render_table_structure(widget)
                     try:
                         res = cur.execute(f"SELECT * FROM {widget._active_table}").fetchall()
                         with widget as table:
@@ -403,9 +403,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                                               .fetchall()))
                 if "sqlite_sequence" in editor.table_names:
                     editor.table_names.remove("sqlite_sequence")
-                self.tables.clear()
-                self.tables.addTopLevelItems(map(lambda x: QTreeWidgetItem([str(x)]), editor.table_names))
-
+                if self.tabs.currentWidget() == editor or self.tabs.currentWidget() is None:
+                    self.tables.clear()
+                    self.tables.addTopLevelItems(map(lambda x: QTreeWidgetItem([str(x)]), editor.table_names))
 
     def create_table(self):
         """
@@ -473,7 +473,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def remove_row(self):
         """
         Method removes selected rows by calling remove_row() from TableEditorWidget
-        :return:
+        :return: None
         """
         widget = self.tabs.currentWidget()
         if isinstance(widget, TableEditorWidget):
@@ -483,8 +483,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def render_active_table(widget):
         """
         Special method for updating table in TableEditorWidget
-        :param widget:
-        :return:
+        :param widget: TableEditorWidget from that will be taken table name for query
+        :return: None
         """
         if isinstance(widget, TableEditorWidget) and isinstance(widget.con, sqlite3.Connection):
             with contextlib.closing(widget.con.cursor()) as cur:
@@ -498,10 +498,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 except sqlite3.Error:
                     pass
 
+    def render_table_structure(self, widget):
+        """
+        Method updates data in table_columns
+        :param widget: TableEditorWidget from that will be taken structure
+        :return: None
+        """
+        self.table_columns.setRowCount(0)
+        if isinstance(widget, TableEditorWidget) and widget.active_table() in widget.structure:
+            self.table_columns.setRowCount(len(widget.structure[widget.active_table()]))
+            for i, row in enumerate(widget.structure[widget.active_table()]):
+                for j, cell in enumerate(row):
+                    self.table_columns.setItem(i, j, QTableWidgetItem(str(cell)))
+            self.table_columns.resizeColumnsToContents()
 
-
-
-
-
-
-
+    def show_error(self, text):
+        self.statusbar.showMessage(str(text), 60000)

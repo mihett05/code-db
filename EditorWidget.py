@@ -11,11 +11,19 @@ class EditorWidget(QWidget):
         self.setupUI()
 
     def setupUI(self):
+        """
+        Method makes UI
+        :return: None
+        """
         self.main_layout = QGridLayout()
         self.setLayout(self.main_layout)
         self.main_layout.addWidget(self.editor())
 
     def editor(self):
+        """
+        Getter for EditorWidget._editor
+        :return: editor
+        """
         return self._editor
 
 
